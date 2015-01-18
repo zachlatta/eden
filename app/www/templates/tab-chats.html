@@ -1,7 +1,14 @@
 <ion-view view-title="Chats">
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="chat in chats" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" ng-model="search" placeholder="Search">
+      </label>
+      <ion-item class="item-remove-animate item-avatar item-icon-right"
+          ng-repeat="chat in chats | filter:search"
+          type="item-text-wrap"
+          href="#/tab/chats/{{chat.id}}">
         <img ng-src="{{chat.face}}">
         <h2>{{chat.participants[0].display}}</h2>
         <p ng-if="chat.first_message">{{chat.first_message}}</p>
