@@ -1,7 +1,7 @@
 {
-  "name": "dispatch",
+  "name": "eden",
   "version": "1.0.0",
-  "description": "dispatch: An Ionic project",
+  "description": "eden: An Ionic project",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^0.7.1",
