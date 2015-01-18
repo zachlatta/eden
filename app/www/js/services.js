@@ -14,13 +14,13 @@ angular.module('starter.services', [
     });
 })
 
-.factory('MyData', function($websocket) {
+.factory('WS', function($websocket, config) {
   // Open a WebSocket connection
-  var dataStream = $websocket('wss://localhost:8080/receive');
+  var dataStream = $websocket('wss://' + config.baseUrl + '/receive');
 
   var collection = [];
 
-  dataStream.onMessage(function(message.data) {
+  dataStream.onMessage(function(message) {
     alert(JSON.parse(message.data));
     collection.push(JSON.parse(message.data));
   });
@@ -37,7 +37,7 @@ angular.module('starter.services', [
 .controller('SomeController', function (MyData) {
 
   $scope.MyData = MyData;
-});
+})
 
 /**
  * A simple example service that returns some data.
