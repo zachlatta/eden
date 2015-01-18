@@ -4,7 +4,8 @@
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="chat in chats" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
         <img ng-src="{{chat.face}}">
         <h2>{{chat.participants[0].display}}</h2>
-        <p>{{chat.lastText}}</p>
+        <p ng-if="chat.first_message">{{chat.first_message}}</p>
+        <p ng-if="!chat.first_message"><em>No recent messages.</em></p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 
         <ion-option-button class="button-assertive" ng-click="remove(chat)">
