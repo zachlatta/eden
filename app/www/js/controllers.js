@@ -1,7 +1,7 @@
 angular.module('starter.controllers', [])
 
 .controller('ChatsCtrl', function($scope, Chats) {
-  $scope.chats = Chats.all();
+  $scope.chats = Chats.query();
   $scope.remove = function(chat) {
     Chats.remove(chat);
   }
@@ -14,13 +14,13 @@ angular.module('starter.controllers', [])
 
   $scope.myId = '12345';
   $scope.data = {};
-  $scope.chat = Chats.get($stateParams.chatId);
+  $scope.chat = Chats.get({id: $stateParams.chatId});
 
   $scope.sendMessage = function () {
     var d = new Date();
     d = d.toLocaleTimeString().replace(/:\d+ /, ' ');
 
-    $scope.chat.msgs.push({
+    $scope.chat.$sendMsg({
       userId: 'TODO',
       text: $scope.data.message,
       time: d
