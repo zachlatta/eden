@@ -1,7 +1,30 @@
 angular.module('starter.controllers', [])
 
 .controller('ChatsCtrl', function($scope, Chats) {
-  $scope.chats = Chats.query();
+  $scope.chats = Chats.query(function () {
+    for (var i=0; i < $scope.chats.length; i++) {
+      for (var j=0; j < $scope.chats[i].participants.length; j++) {
+        var unParsed = $scope.chats[i].participants[j];
+        var participant= JSON.parse(unParsed);
+
+        var display = '';
+        if (participant.first_name && participant.last_name) {
+          display = participant.first_name + ' ' + participant.last_name;
+        } else if (participant.first_name) {
+          display = participant.first_name;
+        } else {
+          display = participant.handle;
+        }
+
+        participant.display = display;
+
+        $scope.chats[i].participants[j] = participant;
+      }
+    }
+
+    console.log($scope.chats);
+  });
+
   $scope.remove = function(chat) {
     Chats.remove(chat);
   }
