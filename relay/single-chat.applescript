@@ -103,40 +103,45 @@ end tell
 
 set chatsList to []
 repeat with aChat in textChats
-	#log (id of aChat) as text
-	set chatObj to createDict()
 	
-	set userList to []
-	tell application "Messages"
+	if id of aChat is equal to "iMessage;-;benb116@gmail.com" then
 		
-		set chatSubject to (subject of aChat)
-		if chatSubject is missing value then
-			set chatSubject to ""
-		end if
+		set chatObj to createDict()
 		
-		set chatId to (id of aChat)
-		repeat with aParticipant in (get participants of aChat)
-			# set userData to {{"first_name", (first name of aParticipant as text)}, {"last_name", (last name of aParticipant as string)}, {"handle", (handle of aParticipant as string)}}
-			set firstName to (first name of aParticipant)
-			if firstName is missing value then
-				set firstName to ""
-			end if
-			set lastName to (last name of aParticipant)
-			if lastName is missing value then
-				set lastName to ""
-			end if
-			set userData to "{\"first_name\":\"" & firstName & "\", \"last_name\":\"" & lastName & "\", \"handle\":\"" & (handle of aParticipant) & "\"}"
+		set userList to []
+		tell application "Messages"
 			
-			set userList to userList & userData
-		end repeat
+			set chatSubject to (subject of aChat)
+			if chatSubject is missing value then
+				set chatSubject to ""
+			end if
+			
+			set chatId to (id of aChat)
+			repeat with aParticipant in (get participants of aChat)
+				# set userData to {{"first_name", (first name of aParticipant as text)}, {"last_name", (last name of aParticipant as string)}, {"handle", (handle of aParticipant as string)}}
+				set firstName to (first name of aParticipant)
+				if firstName is missing value then
+					set firstName to ""
+				end if
+				set lastName to (last name of aParticipant)
+				if lastName is missing value then
+					set lastName to ""
+				end if
+				set userData to "{\"first_name\":\"" & firstName & "\", \"last_name\":\"" & lastName & "\", \"handle\":\"" & (handle of aParticipant) & "\"}"
+				
+				set userList to userList & userData
+			end repeat
+			
+		end tell
 		
-	end tell
+		chatObj's setkv("participants", userList)
+		chatObj's setkv("id", chatId)
+		chatObj's setkv("first_message", chatSubject)
+		set chatsList to chatsList & chatObj
+		#log quoted form of encode(chatObj)
+		
+	end if
 	
-	chatObj's setkv("participants", userList)
-	chatObj's setkv("id", chatId)
-	chatObj's setkv("first_message", chatSubject)
-	set chatsList to chatsList & chatObj
-	#log encode(chatObj)
 end repeat
 
-do shell script "echo " & quoted form of encode(chatsList)
+do shell script "echo " & quoted form of encode(chatObj)
