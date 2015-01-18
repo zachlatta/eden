@@ -1,6 +1,7 @@
 angular.module('starter.controllers', [])
 
-.controller('ChatsCtrl', function($scope, Chats) {
+.controller('ChatsCtrl', function($scope, Chats, WS) {
+
   $scope.chats = Chats.query(function () {
     for (var i=0; i < $scope.chats.length; i++) {
       for (var j=0; j < $scope.chats[i].participants.length; j++) {
@@ -29,13 +30,15 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ChatDetailCtrl', function($scope, $timeout, $stateParams,
-  $ionicScrollDelegate, Chats) {
+  $ionicScrollDelegate, Chats, WS) {
 
   var isIOS = ionic.Platform.isWebView && ionic.Platform.isIOS();
 
   $scope.myId = '12345';
   $scope.data = {};
   $scope.chat = Chats.get({id: $stateParams.chatId});
+  $scope.WS = WS;
+  $scope.WS.setChat($scope.chat);
 
   $scope.sendMessage = function () {
     var d = new Date();

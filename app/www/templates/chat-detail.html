@@ -6,11 +6,6 @@
 -->
 <ion-view view-title="{{chat.name}}">
   <ion-content class="padding">
-    <img ng-src="{{chat.face}}" style="width: 64px; height: 64px">
-    <p>
-      {{chat.lastText}}
-    </p>
-
     <div class="list">
       <p class="me" ng-repeat="msg in chat.msgs">{{msg.text}}</p>
     </div>

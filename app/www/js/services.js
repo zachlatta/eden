@@ -10,28 +10,38 @@ angular.module('starter.services', [
   Chat.prototype.sendMsg = function (msg) {
     this.msgs = this.msgs || [];
     this.msgs.push(msg);
-
+    console.log(msg);
     return $http.post(config.baseUrl + '/chats/'+this.id+'/messages', msg);
+  };
+
+  Chat.prototype.addMsg = function (msg) {
+    this.msgs = this.msgs || [];
+    console.log(msg);
+    this.msgs.push(msg);
   };
 
   return Chat;
 })
 
-.factory('WS', function($websocket, config) {
+.factory('WS', function(config, Chats) {
   // Open a WebSocket connection
-  var dataStream = $websocket('wss://' + config.baseUrl + '/receive');
+  //var dataStream = $websocket('wss://' + config.baseUrl.split('https://').split('%2C') + '/receive');
+  //var dataStream = $websocket('ws://fuckit.ngrok.com/receive');
+  var dataStream = new WebSocket('ws://fuckit.ngrok.com/receive');
 
-  var collection = [];
+  var chat;
 
-  dataStream.onMessage(function(message) {
-    alert(JSON.parse(message.data));
-    collection.push(JSON.parse(message.data));
-  });
+  dataStream.onmessage = function (msg) {
+    var parsed = JSON.parse(msg.data);
+    chat.addMsg(parsed.data);
+  };
 
   var methods = {
-    collection: collection,
-    get: function() {
+    get: function () {
       dataStream.send(JSON.stringify({ action: 'get' }));
+    },
+    setChat: function (c) {
+      chat = c;
     }
   };
 
