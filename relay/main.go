@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os/exec"
@@ -233,15 +234,42 @@ func listChats(w http.ResponseWriter, r *http.Request) {
 	renderJSON(w, http.StatusOK, chats)
 }
 
+func getChat(w http.ResponseWriter, r *http.Request) {
+	type chat struct {
+		Participants []string `json:"participants"`
+		ID           string   `json:"id"`
+		FirstMsg     string   `json:"first_message"`
+	}
+
+	c := exec.Command("/usr/bin/osascript", "single-chat.applescript")
+	byteString, err := c.Output()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	leChat := chat{}
+
+	if err := json.Unmarshal(byteString, &leChat); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	renderJSON(w, http.StatusOK, leChat)
+}
+
 func createMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
 	go h.run()
-	http.HandleFunc("/send", addDefaultHeaders(sendHandler))
-	http.HandleFunc("/incoming_msg", incomingMsg)
-	http.HandleFunc("/receive", serveWs)
-	http.HandleFunc("/chats", listChats)
-	http.HandleFunc("/chats/{chatID}/messages", createMessage)
+	r := mux.NewRouter()
+	r.HandleFunc("/send", addDefaultHeaders(sendHandler))
+	r.HandleFunc("/incoming_msg", incomingMsg)
+	r.HandleFunc("/receive", serveWs)
+	r.HandleFunc("/chats", addDefaultHeaders(listChats))
+	r.HandleFunc("/chats/{chatID}", getChat)
+	r.HandleFunc("/chats/{chatID}/messages", createMessage)
+	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
