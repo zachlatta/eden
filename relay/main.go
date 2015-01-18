@@ -186,7 +186,15 @@ func incomingMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg, err := json.Marshal(msg{"new_msg", req})
+	var formattedMsg struct {
+		UserID string `json:"userId"`
+		Text   string `json:"text"`
+	}
+
+	formattedMsg.UserID = req.From
+	formattedMsg.Text = req.Msg
+
+	msg, err := json.Marshal(msg{"new_msg", formattedMsg})
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -194,7 +202,7 @@ func incomingMsg(w http.ResponseWriter, r *http.Request) {
 
 	h.broadcast <- msg
 
-	renderJSON(w, http.StatusOK, nil)
+	renderJSON(w, http.StatusOK, msg)
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
@@ -301,7 +309,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/send", addDefaultHeaders(sendHandler))
 	r.HandleFunc("/incoming_msg", incomingMsg)
-	r.HandleFunc("/receive", serveWs)
+	r.HandleFunc("/receive", addDefaultHeaders(serveWs))
 	r.HandleFunc("/chats", addDefaultHeaders(listChats))
 	r.HandleFunc("/chats/{chatID}", addDefaultHeaders(getChat))
 	r.HandleFunc("/chats/{chatID}/messages", addDefaultHeaders(createMessage))
