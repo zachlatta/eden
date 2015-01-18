@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
     var d = new Date();
     d = d.toLocaleTimeString().replace(/:\d+ /, ' ');
 
-    $scope.chat.$sendMsg({
+    $scope.chat.sendMsg({
       userId: 'TODO',
       text: $scope.data.message,
       time: d

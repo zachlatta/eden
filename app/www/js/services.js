@@ -3,15 +3,18 @@ angular.module('starter.services', [
   'ngWebSocket'
 ])
 
-.factory('Chats', function ($resource, config) {
-  return $resource(config.baseUrl + '/chats/:id',
-    { id:'@id' },
-    {
-      sendMsg: {
-        method: 'POST',
-        url: config.baseUrl + '/chats/:id/messages'
-      }
-    });
+.factory('Chats', function ($resource, $http, config) {
+  var Chat = $resource(config.baseUrl + '/chats/:id',
+    { id:'@id' });
+
+  Chat.prototype.sendMsg = function (msg) {
+    this.msgs = this.msgs || [];
+    this.msgs.push(msg);
+
+    return $http.post(config.baseUrl + '/chats/'+this.id+'/messages', msg);
+  };
+
+  return Chat;
 })
 
 .factory('WS', function($websocket, config) {
