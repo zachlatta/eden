@@ -1,5 +1,6 @@
 angular.module('starter.services', [
-  'ngResource'
+  'ngResource',
+  'ngWebSocket'
 ])
 
 .factory('Chats', function ($resource, config) {
@@ -12,6 +13,31 @@ angular.module('starter.services', [
       }
     });
 })
+
+.factory('MyData', function($websocket) {
+  // Open a WebSocket connection
+  var dataStream = $websocket('wss://localhost:8080/receive');
+
+  var collection = [];
+
+  dataStream.onMessage(function(message.data) {
+    alert(JSON.parse(message.data));
+    collection.push(JSON.parse(message.data));
+  });
+
+  var methods = {
+    collection: collection,
+    get: function() {
+      dataStream.send(JSON.stringify({ action: 'get' }));
+    }
+  };
+
+  return methods;
+})
+.controller('SomeController', function (MyData) {
+
+  $scope.MyData = MyData;
+});
 
 /**
  * A simple example service that returns some data.
