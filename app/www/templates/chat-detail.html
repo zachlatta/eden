@@ -10,5 +10,20 @@
     <p>
       {{chat.lastText}}
     </p>
+
+    <div class="list">
+      <p class="me" ng-repeat="msg in chat.msgs">{{msg.text}}</p>
+    </div>
   </ion-content>
+
+  <ion-footer-bar keyboard-attach class="bar-stable item-input-inset">
+    <label class="item-input-wrapper">
+      <input type="text" placeholder="Type your message"
+        on-return="sendMessage(); closeKeyboard()"
+        ng-model="data.message" on-focus="inputUp()" on-blur="inputDown()" />
+    </label>
+    <button class="button button-clear" ng-click="sendMessage()">
+      Send
+    </button>
+  </ion-footer-bar>
 </ion-view>

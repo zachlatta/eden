@@ -8,7 +8,8 @@ angular.module('starter.services', [])
     id: 0,
     name: 'Ben Sparrow',
     lastText: 'You on your way?',
-    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
+    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png',
+    msgs: []
   }, {
     id: 1,
     name: 'Max Lynx',
