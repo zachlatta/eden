@@ -21,8 +21,6 @@ angular.module('starter.controllers', [])
         $scope.chats[i].participants[j] = participant;
       }
     }
-
-    console.log($scope.chats);
   });
 
   $scope.remove = function(chat) {
