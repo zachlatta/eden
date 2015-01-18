@@ -213,7 +213,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	c.readPump()
 }
 
-type msg struct {
+type chatMsg struct {
 	Text   string `json:"text"`
 	UserID string `json:"user_id"`
 }
@@ -264,7 +264,7 @@ func getChat(w http.ResponseWriter, r *http.Request) {
 
 func createMessage(w http.ResponseWriter, r *http.Request) {
 	chatID := mux.Vars(r)["chatID"]
-	msg := r.URL.Query().Get("text")
+	chatMsg := r.URL.Query().Get("text")
 
 	command := `
 tell application "Messages"
@@ -275,10 +275,10 @@ tell application "Messages"
 	end repeat
 end tell`
 
-	fmt.Println(fmt.Sprintf(command, chatID, msg))
+	fmt.Println(fmt.Sprintf(command, chatID, chatMsg))
 
 	c := exec.Command("/usr/bin/osascript", "-e",
-		fmt.Sprintf(command, chatID, msg))
+		fmt.Sprintf(command, chatID, chatMsg))
 	if err := c.Run(); err != nil {
 		fmt.Println(err)
 		return
@@ -293,7 +293,7 @@ func main() {
 	go h.run()
 	r := mux.NewRouter()
 	r.HandleFunc("/send", addDefaultHeaders(sendHandler))
-	r.HandleFunc("/incoming_msg", incomingMsg)
+	r.HandleFunc("/incoming_chatMsg", incomingMsg)
 	r.HandleFunc("/receive", serveWs)
 	r.HandleFunc("/chats", addDefaultHeaders(listChats))
 	r.HandleFunc("/chats/{chatID}", addDefaultHeaders(getChat))
