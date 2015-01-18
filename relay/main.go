@@ -209,10 +209,39 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	c.readPump()
 }
 
+func listChats(w http.ResponseWriter, r *http.Request) {
+	type chat struct {
+		Participants []string `json:"participants"`
+		ID           string   `json:"id"`
+		FirstMsg     string   `json:"first_message"`
+	}
+
+	c := exec.Command("/usr/bin/osascript", "all-chats.applescript")
+	byteString, err := c.Output()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	chats := []chat{}
+
+	if err := json.Unmarshal(byteString, &chats); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	renderJSON(w, http.StatusOK, chats)
+}
+
+func createMessage(w http.ResponseWriter, r *http.Request) {
+}
+
 func main() {
 	go h.run()
 	http.HandleFunc("/send", addDefaultHeaders(sendHandler))
 	http.HandleFunc("/incoming_msg", incomingMsg)
 	http.HandleFunc("/receive", serveWs)
+	http.HandleFunc("/chats", listChats)
+	http.HandleFunc("/chats/{chatID}/messages", createMessage)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
